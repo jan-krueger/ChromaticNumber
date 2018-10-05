@@ -16,7 +16,7 @@ public class AsciiRender {
 
         final double delta = (endY - startY) / (endX - startX * 1D) ;
         double y = startY;
-        if(y >= 0) {
+        if(delta >= 0) {
             for (int x = startX; x < endX && y < endY; x++) {
                 this.pixels[x][(int) y] = c;
                 y += delta;
@@ -24,9 +24,13 @@ public class AsciiRender {
         } else {
             for (int x = startX; x < endX && y >= endY; x++) {
                 this.pixels[x][(int) y] = c;
-                y -= delta;
+                y += delta;
             }
         }
+    }
+
+    public void drawChar(int x, int y, char c) {
+        this.pixels[x][y] = c;
     }
 
     public String toFrame() {

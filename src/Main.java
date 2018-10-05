@@ -1,5 +1,7 @@
+import edu.um.chromaticnumber.AsciiRender;
 import edu.um.chromaticnumber.ChromaticNumber;
 import edu.um.chromaticnumber.Graph;
+import edu.um.chromaticnumber.Node;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) {
         //
-        int type = 0;
+        int type = 5;
 
         Graph graph = new Graph();
         if(type == 0) {
@@ -86,13 +88,41 @@ public class Main {
             graph.addEdge(2, 3, true);
             graph.addEdge(4, 2, true);
             graph.addEdge(4, 3, true);
+        } else if(type == 3) {
+            System.out.println("new");
+            graph.addNode(1, -1);
+            graph.addNode(2, -1);
+            graph.addNode(3, -1);
+            graph.addNode(4, -1);
+            graph.addNode(5, -1);
+            graph.addNode(6, -1);
+            graph.addNode(7, -1);
+            graph.addNode(8, -1);
+
+            graph.addEdge(1, 4, true);
+            graph.addEdge(1, 6, true);
+            graph.addEdge(1, 8, true);
+
+            graph.addEdge(3, 2, true);
+            graph.addEdge(3, 6, true);
+            graph.addEdge(3, 8, true);
+
+            graph.addEdge(5, 2, true);
+            graph.addEdge(5, 4, true);
+            graph.addEdge(5, 8, true);
+
+
+            graph.addEdge(7, 2, true);
+            graph.addEdge(7, 4, true);
+            graph.addEdge(7, 6, true);
         }
 
         long time = System.nanoTime();
-        int output = ChromaticNumber.exact(graph);
+        int output = ChromaticNumber.compute(ChromaticNumber.Type.EXACT, graph);
         long timeDelta = (System.nanoTime() - time);
-        System.out.println("Upper Bound: " + ChromaticNumber.upperBound(graph) + " <-> " + ChromaticNumber.lowerBOund(graph));
+        System.out.println("Upper Bound: " + ChromaticNumber.compute(ChromaticNumber.Type.UPPER, graph) + " <-> " + ChromaticNumber.compute(ChromaticNumber.Type.LOWER, graph));
         System.out.println(String.format("Chromatic Number: %d -> Time: %dns (%dms)", output, timeDelta, TimeUnit.NANOSECONDS.toMillis(timeDelta)));
+
     }
 
 }

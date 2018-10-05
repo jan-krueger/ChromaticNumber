@@ -5,21 +5,46 @@ import java.util.stream.Collectors;
 
 public class ChromaticNumber {
 
-    //--- Upper Bound
+    public enum Type {
+        UPPER,
+        LOWER,
+        EXACT
+    }
 
-    public static int upperBound(Graph graph) {
+    public static int compute(Type type, Graph graph) {
+        if(graph.getNodes().isEmpty()) {
+            return 1;
+        }
+
+        switch (type) {
+
+            case UPPER: return upperBound(graph);
+            case LOWER: return lowerBound(graph);
+            case EXACT: return exact(graph);
+        }
+
+        throw new IllegalStateException();
+    }
+
+    //--- Upper Bound
+    private static int upperBound(Graph graph) {
         return graph.getNodes().keySet().stream().map(graph::getEdges).mapToInt(List::size).max().getAsInt();
     }
 
-    public static int lowerBOund(Graph graph) {
+    private static int lowerBound(Graph graph) {
         return graph.getNodes().keySet().stream().map(graph::getEdges).mapToInt(List::size).min().getAsInt();
     }
 
 
     //---
-    public static int exact(Graph graph) {
+    private static int exact(Graph graph) {
 
         List<Node> unvisited = new ArrayList<>(graph.getNodes().values());
+
+        if(unvisited.isEmpty()) {
+            return 1;
+        }
+
         int max = 0;
         while (!unvisited.isEmpty()) {
             max = Math.max(max, (exact(graph, unvisited.get(0), unvisited) + 1));
