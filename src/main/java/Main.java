@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) {
         //
-        int type = 4;
+        int type = 0;
 
         Graph graph = new Graph();
         if(type == 0) {
@@ -99,30 +99,16 @@ public class Main {
             graph.addNode(7, -1);
             graph.addNode(8, -1);
 
-            graph.addEdge(1, 4, true);
-            graph.addEdge(1, 6, true);
-            graph.addEdge(1, 8, true);
-
-            graph.addEdge(3, 2, true);
-            graph.addEdge(3, 6, true);
-            graph.addEdge(3, 8, true);
-
-            graph.addEdge(5, 2, true);
-            graph.addEdge(5, 4, true);
-            graph.addEdge(5, 8, true);
 
 
-            graph.addEdge(7, 2, true);
-            graph.addEdge(7, 4, true);
-            graph.addEdge(7, 6, true);
         } else if(type == 4) {
-            final int nodes = 5000;
+            final int nodes = 2000;
             IntStream.range(0, nodes).forEach(i -> graph.addNode(i, -1));
             Random random = new Random();
 
             for(int from = 0; from < nodes; from++) {
                 for(int to = 0; to < nodes; to++) {
-                    if (from != to && random.nextDouble() < .33333333333333) {
+                    if (from != to && random.nextDouble() < .1) {
                         graph.addEdge(from, to, true);
                     }
                 }
@@ -147,6 +133,32 @@ public class Main {
             System.out.println(totalTime + "ns -> " + TimeUnit.NANOSECONDS.toMillis(totalTime) + " ms => " + result);
             */
 
+        } else if(type == 5) {
+            for(int i = 0; i < 12; i++) graph.addNode(i, -1);
+
+            graph.addEdge(0, 1, true);
+            graph.addEdge(0, 2, true);
+            graph.addEdge(2, 3, true);
+            graph.addEdge(1, 3, true);
+            graph.addEdge(1, 4, true);
+            graph.addEdge(1, 7, true);
+            graph.addEdge(3, 7, true);
+            graph.addEdge(4, 5, true);
+            graph.addEdge(5, 6, true);
+            graph.addEdge(6, 7, true);
+            graph.addEdge(7, 8, true);
+            graph.addEdge(8, 9, true);
+            graph.addEdge(3, 9, true);
+            graph.addEdge(3, 10, true);
+            graph.addEdge(10, 11, true);
+            graph.addEdge(11, 8, true);
+        } else if(type == 6) {
+            graph.addNode(0, -1);
+            graph.addNode(1, -1);
+            graph.addNode(2, -1);
+            graph.addEdge(0, 1, true);
+            graph.addEdge(1, 2, true);
+            graph.addEdge(2, 0, true);
         }
 
         boolean iterative = true;
@@ -154,7 +166,7 @@ public class Main {
         long time = System.nanoTime();
         int output = iterative ? ChromaticNumber.exactIterative(graph) : ChromaticNumber.compute(ChromaticNumber.Type.EXACT, graph);
         long timeDelta = (System.nanoTime() - time);
-        System.out.println("Upper Bound: " + ChromaticNumber.compute(ChromaticNumber.Type.UPPER, graph) + " <-> " + ChromaticNumber.compute(ChromaticNumber.Type.LOWER, graph));
+        //System.out.println("Upper Bound: " + ChromaticNumber.compute(ChromaticNumber.Type.UPPER, graph) + " <-> " + ChromaticNumber.compute(ChromaticNumber.Type.LOWER, graph));
         System.out.println(String.format("Chromatic Number: %d -> Time: %dns (%dms)", output, timeDelta, TimeUnit.NANOSECONDS.toMillis(timeDelta)));
 
     }

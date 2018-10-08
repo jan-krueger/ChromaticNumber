@@ -16,7 +16,6 @@ public class ChromaticNumber {
             return 1;
         }
 
-
         switch (type) {
 
             case UPPER:
@@ -59,7 +58,7 @@ public class ChromaticNumber {
             return graph.getNodes().size() % 2 == 0 ? 2 : 3;
         }*/
 
-        //--- Termination Condition: Already checked this note!
+        //--- Termination Condition: Already checked this node!
         if(node.getValue() > -1) {
             return node.getValue();
         }
@@ -67,8 +66,8 @@ public class ChromaticNumber {
         //--- What colours does its neighbours have?
         List<Node.Edge> edges = graph.getEdges(node.getId());
         List<Integer> colours = edges.stream()
-                .filter(edge -> edge.getB().getValue() != -1)
-                .map(edge -> edge.getB().getValue())
+                .filter(edge -> edge.getTo().getValue() != -1)
+                .map(edge -> edge.getTo().getValue())
                 .collect(Collectors.toList());
 
         //--- No colours -> first node being visited in the graph
@@ -98,7 +97,7 @@ public class ChromaticNumber {
         //--- call for neighbour nodes & figure out the "highest" value/colour used
         int max = node.getValue();
         for (Node.Edge edge : edges) {
-            max = Math.max(max, exact(graph, edge.getB(), unvisited));
+            max = Math.max(max, exact(graph, edge.getTo(), unvisited));
         }
 
         return max;
@@ -106,7 +105,7 @@ public class ChromaticNumber {
     }
 
     public static int exactIterative(Graph graph) {
-        HashMap<Integer, Node> unvisited = new HashMap<>();
+        HashMap<Integer, Node> unvisited = new LinkedHashMap<>();
         Map.Entry<Integer, Node> entry = graph.getNodes().entrySet().stream().findFirst().get();
         unvisited.put(entry.getKey(), entry.getValue());
 
@@ -114,13 +113,14 @@ public class ChromaticNumber {
         while (!unvisited.isEmpty()){
              // is this (too) slow?
             Node node = unvisited.values().stream().findFirst().get();
+            System.out.println(node.getId());
             unvisited.remove(node.getId());
 
             //--- What colours does its neighbours have?
             List<Node.Edge> edges = graph.getEdges(node.getId());
             List<Integer> colours = edges.stream()
-                    .filter(edge -> edge.getB().getValue() != -1)
-                    .map(edge -> edge.getB().getValue())
+                    .filter(edge -> edge.getTo().getValue() != -1)
+                    .map(edge -> edge.getTo().getValue())
                     .collect(Collectors.toList());
 
             //--- No colours -> first node being visited in the graph
@@ -150,15 +150,15 @@ public class ChromaticNumber {
 
             //--- call for neighbour nodes & figure out the "highest" value/colour used
             for (Node.Edge edge : edges) {
-                if (edge.getB().getValue() == -1) {
-                    Node e = edge.getB();
+                if (edge.getTo().getValue() == -1) {
+                    Node e = edge.getTo();
                     unvisited.put(e.getId(), e);
                 }
             }
 
         }
 
-        return max;
+        return max + 1;
 
     }
 
@@ -173,9 +173,9 @@ public class ChromaticNumber {
         visited.add(nodeId);
 
         for(Node.Edge edge : graph.getEdges(nodeId)) {
-            if(!(visited.contains(edge.getB().getId()))) {
-                return isGraphTree(graph, edge.getB().getId(), visited, nodeId);
-            } else if (edge.getB().getId() != currentParent) {
+            if(!(visited.contains(edge.getTo().getId()))) {
+                return isGraphTree(graph, edge.getTo().getId(), visited, nodeId);
+            } else if (edge.getTo().getId() != currentParent) {
                 return false;
             }
         }

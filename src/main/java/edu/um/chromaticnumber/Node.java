@@ -24,20 +24,20 @@ public class Node {
 
     public static class Edge {
 
-        private Node a;
-        private Node b;
+        private Node from;
+        private Node to;
 
-        public Edge(Node a, Node b) {
-            this.a = a;
-            this.b = b;
+        public Edge(Node from, Node to) {
+            this.from = from;
+            this.to = to;
         }
 
-        public Node getA() {
-            return this.a;
+        public Node getFrom() {
+            return this.from;
         }
 
-        public Node getB() {
-            return this.b;
+        public Node getTo() {
+            return this.to;
         }
 
     }
