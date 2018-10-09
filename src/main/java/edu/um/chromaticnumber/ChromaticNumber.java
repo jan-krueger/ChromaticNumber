@@ -12,10 +12,6 @@ public class ChromaticNumber {
     }
 
     public static int compute(Type type, Graph graph) {
-        if(graph.getNodes().isEmpty() || graph.getEdges().isEmpty()) {
-            return 1;
-        }
-
         switch (type) {
 
             case UPPER:
@@ -24,21 +20,9 @@ public class ChromaticNumber {
             case LOWER:
                 return lowerBound(graph);
 
-            case EXACT:
-                List<Node> unvisited = new ArrayList<>(graph.getNodes().values());
-                int max = -1;
-                while (!(unvisited.isEmpty())) {
-                    max = Math.max(exact(graph, unvisited.get(0), unvisited), max);
-                }
-                return max;
-
+            case EXACT: break;
         }
         throw new IllegalStateException();
-    }
-
-    //--- Upper Bound
-    private static int upperBound(Graph graph) {
-        return graph.getNodes().keySet().stream().map(graph::getEdges).mapToInt(List::size).max().getAsInt();
     }
 
     private static int lowerBound(Graph graph) {
@@ -47,7 +31,7 @@ public class ChromaticNumber {
 
 
     //---
-    public static int exact(Graph graph, final Node node, List<Node> unvisited) {
+    public static int upperBoundRecurisve(Graph graph, final Node node, List<Node> unvisited) {
         unvisited.remove(node);
 
         /*if(isGraphFullyConnected(graph)) {
@@ -97,14 +81,14 @@ public class ChromaticNumber {
         //--- call for neighbour nodes & figure out the "highest" value/colour used
         int max = node.getValue();
         for (Node.Edge edge : edges) {
-            max = Math.max(max, exact(graph, edge.getTo(), unvisited));
+            max = Math.max(max, upperBoundRecurisve(graph, edge.getTo(), unvisited));
         }
 
         return max;
 
     }
 
-    public static int exactIterative(Graph graph) {
+    public static int upperBound(Graph graph) {
         HashMap<Integer, Node> unvisited = new LinkedHashMap<>();
         Map.Entry<Integer, Node> entry = graph.getNodes().entrySet().stream().findFirst().get();
         unvisited.put(entry.getKey(), entry.getValue());

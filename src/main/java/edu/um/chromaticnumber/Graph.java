@@ -48,4 +48,19 @@ public class Graph {
         return this.edges;
     }
 
+    public int[][] toAdjacentMatrix() {
+
+        int max = this.nodes.keySet().stream().max(Integer::compare).get();
+        int[][] matrix = new int[max][max];
+
+        for(Map.Entry<Integer, Node> node : this.nodes.entrySet()) {
+            for(Node.Edge edge : this.getEdges(node.getKey())) {
+                matrix[node.getKey()][edge.getTo().getId()] = 1;
+            }
+        }
+
+        return matrix;
+
+    }
+
 }
