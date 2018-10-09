@@ -159,16 +159,35 @@ public class Main {
             graph.addEdge(0, 1, true);
             graph.addEdge(1, 2, true);
             graph.addEdge(2, 0, true);
+        } else if(type == 7) {
+
+            for(int i = 0; i < 8; i++) graph.addNode(i, -1);
+
+            graph.addEdge(0, 5, true);
+            graph.addEdge(0,6, true);
+            graph.addEdge(0, 7, true);
+            graph.addEdge(1, 4, true);
+            graph.addEdge(1, 6, true);
+            graph.addEdge(1, 7, true);
+            graph.addEdge(2, 4, true);
+            graph.addEdge(2, 5,true );
+            graph.addEdge(2, 7, true);
+            graph.addEdge(3, 4, true);
+            graph.addEdge(3, 5, true);
+            graph.addEdge(3, 6, true);
+
         }
 
         boolean iterative = true;
 
         long time = System.nanoTime();
-        int output = iterative ? ChromaticNumber.exactIterative(graph) : ChromaticNumber.compute(ChromaticNumber.Type.EXACT, graph);
+        //int output = iterative ? ChromaticNumber.upperBoundIterative(graph) : ChromaticNumber.compute(ChromaticNumber.Type.EXACT, graph);
         long timeDelta = (System.nanoTime() - time);
         //System.out.println("Upper Bound: " + ChromaticNumber.compute(ChromaticNumber.Type.UPPER, graph) + " <-> " + ChromaticNumber.compute(ChromaticNumber.Type.LOWER, graph));
-        System.out.println(String.format("Chromatic Number: %d -> Time: %dns (%dms)", output, timeDelta, TimeUnit.NANOSECONDS.toMillis(timeDelta)));
-
+        //System.out.println(String.format("Chromatic Number: %d -> Time: %dns (%dms)", output, timeDelta, TimeUnit.NANOSECONDS.toMillis(timeDelta)));
+        System.out.println(ChromaticNumber.exactTest(graph));
+        graph.reset();
+        System.out.println("simple: " + ChromaticNumber.simpleUpperBound(graph));
     }
 
 }

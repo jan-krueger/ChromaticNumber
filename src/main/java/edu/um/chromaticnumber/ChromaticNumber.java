@@ -1,6 +1,7 @@
 package edu.um.chromaticnumber;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ChromaticNumber {
@@ -12,108 +13,103 @@ public class ChromaticNumber {
     }
 
     public static int compute(Type type, Graph graph) {
-        if(graph.getNodes().isEmpty() || graph.getEdges().isEmpty()) {
-            return 1;
-        }
+        graph.reset();
 
         switch (type) {
 
-            case UPPER:
-                return upperBound(graph);
-
-            case LOWER:
-                return lowerBound(graph);
-
-            case EXACT:
-                List<Node> unvisited = new ArrayList<>(graph.getNodes().values());
-                int max = -1;
-                while (!(unvisited.isEmpty())) {
-                    max = Math.max(exact(graph, unvisited.get(0), unvisited), max);
-                }
-                return max;
+            case LOWER: return -1;
+            case UPPER: return upperBoundIterative(graph);
+            case EXACT: return exactTest(graph);
 
         }
         throw new IllegalStateException();
     }
 
-    //--- Upper Bound
-    private static int upperBound(Graph graph) {
-        return graph.getNodes().keySet().stream().map(graph::getEdges).mapToInt(List::size).max().getAsInt();
-    }
-
-    private static int lowerBound(Graph graph) {
-        return graph.getNodes().keySet().stream().map(graph::getEdges).mapToInt(List::size).min().getAsInt();
-    }
-
-
     //---
-    public static int exact(Graph graph, final Node node, List<Node> unvisited) {
-        unvisited.remove(node);
-
-        /*if(isGraphFullyConnected(graph)) {
-            return graph.getNodes().size() - 1;
-        } else if(isGraphTree(graph, node.getId(), new HashSet<>(), -1)) {
-            return 2;
-        } /*else if(isCircle(graph, )) {
-            return graph.getNodes().size() % 2 == 0 ? 2 : 3;
-        }*/
-
-        //--- Termination Condition: Already checked this node!
-        if(node.getValue() > -1) {
-            return node.getValue();
+    public static int exactTest(Graph graph) {
+        int upper = greedy(graph);
+        System.out.println("Greedy " + upper);
+        graph.reset();
+        while (exact(graph, upper)) {
+            graph.reset();
+            upper--;
         }
+        return upper+1;
+    }
 
-        //--- What colours does its neighbours have?
-        List<Node.Edge> edges = graph.getEdges(node.getId());
-        List<Integer> colours = edges.stream()
-                .filter(edge -> edge.getTo().getValue() != -1)
-                .map(edge -> edge.getTo().getValue())
-                .collect(Collectors.toList());
+    public static int simpleUpperBound(Graph graph) {
+        return graph.getEdges().values().stream().mapToInt(List::size).max().getAsInt() + 1;
+    }
 
-        //--- No colours -> first node being visited in the graph
-        if(colours.isEmpty()) {
-            node.setValue(0);
-        }
-        //--- At least one colour -> not the first node anymore
-        else {
+    public static int upperBoundIterative(Graph graph) {
+        //--- Build unvisited map ordered by degree of nodes descending
+        Stack<Node> unvisited = graph.getNodes().values().stream()
+                .sorted(Comparator.comparingInt(o -> graph.getEdges(o.getId()).size()))
+                .collect(Collectors.toCollection(Stack::new));
+        int max = 0;
+        while (!unvisited.isEmpty()){
+            Node node = unvisited.pop();
 
-            //--- "Highest"  value/colour adjacent to the node
-            final int max = colours.stream().max(Comparator.naturalOrder()).get();
+            //--- What colours does its neighbours have?
+            List<Node.Edge> edges = graph.getEdges(node.getId());
+            List<Integer> colours = edges.stream()
+                    .filter(edge -> edge.getTo().getValue() != -1)
+                    .map(edge -> edge.getTo().getValue())
+                    .collect(Collectors.toList());
 
-            int colour = 0; // Lowest value we can chose for a valid colour
+            //--- No colours -> first node being visited in the graph
+            if (colours.isEmpty()) {
+                node.setValue(0);
+            }
+            //--- At least one colour -> not the first node anymore
+            else {
 
-            //--- try to ideally find an existing colour that we can reuse
-            while (colour <= max) {
-                if(!colours.contains(colour)) {
-                    break;
+                //--- "Highest"  value/colour adjacent to the node
+                final int maxColour = colours.stream().max(Comparator.naturalOrder()).get();
+
+                int colour = 0; // Lowest value we can chose for a valid colour
+
+                //--- try to ideally find an existing colour that we can reuse
+                while (colour <= maxColour) {
+                    if (!colours.contains(colour)) {
+                        break;
+                    }
+                    colour++;
                 }
-                colour++;
+
+                node.setValue(colour);
+                max = Math.max(max, colour);
+
             }
 
-            node.setValue(colour);
-
         }
 
-        //--- call for neighbour nodes & figure out the "highest" value/colour used
-        int max = node.getValue();
-        for (Node.Edge edge : edges) {
-            max = Math.max(max, exact(graph, edge.getTo(), unvisited));
-        }
-
-        return max;
+        return max + 1;
 
     }
+/*
+    public static int lowerBound(Graph graph) {
+        return bronKerbosch(graph.getEdgeList(), new ArrayList<>(), new ArrayList<>());
+    }
+*/
+   /* private static int bronKerbosch(List<Node.Edge> p, List<Node.Edge> r, List<Node.Edge> x) {
+        if(p.stream().filter(x::contains).count() == 0) {
+            return r.size();
+        }
+        p.forEach(edge -> {
+            bronKerbosch((p.contains(edge) ? new ArrayList<Node.Edge>() {{this.add(edge)}} : new ArrayList<>())), r.stream().filter())
+        });
+    }*/
 
-    public static int exactIterative(Graph graph) {
+    public static int greedy(Graph graph) {
         HashMap<Integer, Node> unvisited = new LinkedHashMap<>();
         Map.Entry<Integer, Node> entry = graph.getNodes().entrySet().stream().findFirst().get();
         unvisited.put(entry.getKey(), entry.getValue());
 
         int max = 0;
         while (!unvisited.isEmpty()){
-             // is this (too) slow?
+            // is this (too) slow?
             Node node = unvisited.values().stream().findFirst().get();
-            System.out.println(node.getId());
             unvisited.remove(node.getId());
 
             //--- What colours does its neighbours have?
@@ -161,6 +157,38 @@ public class ChromaticNumber {
         return max + 1;
 
     }
+
+    public static boolean exact(Graph graph, int colours) {
+        return exactIterative(graph, colours, graph.getNode(graph.getMinNodeId()));
+    }
+
+    private static boolean exactIterative(Graph graph, int color_nb, Node node) {
+
+        if(graph.getNodes().values().stream().noneMatch(e -> e.getValue() == -1)) {
+            return true;
+        }
+
+        for(int c = 1; c < color_nb + 1; c++) {
+            if(isSafeColour(graph, node, c)) {
+                node.setValue(c);
+
+                Node next = graph.getNode(node.getId() + 1);
+
+                if(next == null || exactIterative(graph, color_nb, next)) {
+                    return true;
+                }
+
+                node.setValue(0);
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isSafeColour(Graph graph, Node node, int colour) {
+        return graph.getEdges(node.getId()).stream().noneMatch(e -> e.getTo().getValue() == colour);
+    }
+
 
     private static boolean isGraphFullyConnected(Graph graph) {
         //--- Check if the amount edges is at every node equals to the amount of total nodes minus one.

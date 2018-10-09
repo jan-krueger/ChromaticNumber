@@ -9,9 +9,18 @@ public class Graph {
     private Map<Integer, Node> nodes = new HashMap<>();
     private Map<Integer, List<Edge>> edges = new HashMap<>();
 
+    private int minNodeId = Integer.MAX_VALUE;
+    private int maxNodeId = Integer.MIN_VALUE;
+
     public Graph() {}
 
+    public void reset() {
+        this.nodes.values().forEach(e -> e.setValue(-1));
+    }
+
     public void addNode(int id, int value) {
+        minNodeId = Math.min(id, minNodeId);
+        maxNodeId = Math.max(id, maxNodeId);
         if(!(this.nodes.containsKey(id))) {
             this.nodes.put(id, new Node(id, value));
         }
@@ -32,13 +41,18 @@ public class Graph {
         if(this.nodes.containsKey(i)) {
             return this.nodes.get(i);
         }
-        throw new IllegalArgumentException();
+        return null;
+    }
+
+    public List<Edge> getEdgeList() {
+        List<Edge> edges = new ArrayList<>();
+        this.edges.forEach((k, v) -> edges.addAll(v));
+        return edges;
     }
 
     public List<Edge> getEdges(int node) {
         return this.edges.getOrDefault(node, new ArrayList<>());
     }
-
 
     public Map<Integer, Node> getNodes() {
         return this.nodes;
@@ -48,4 +62,11 @@ public class Graph {
         return this.edges;
     }
 
+    public int getMaxNodeId() {
+        return maxNodeId;
+    }
+
+    public int getMinNodeId() {
+        return minNodeId;
+    }
 }
