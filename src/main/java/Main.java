@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 public class Main {
@@ -102,13 +101,13 @@ public class Main {
 
 
         } else if(type == 4) {
-            final int nodes = 2000;
+            final int nodes = 30;
             IntStream.range(0, nodes).forEach(i -> graph.addNode(i, -1));
             Random random = new Random();
 
             for(int from = 0; from < nodes; from++) {
                 for(int to = 0; to < nodes; to++) {
-                    if (from != to && random.nextDouble() < .1) {
+                    if (from != to && random.nextDouble() < .5) {
                         graph.addEdge(from, to, true);
                     }
                 }
@@ -176,8 +175,29 @@ public class Main {
             graph.addEdge(3, 5, true);
             graph.addEdge(3, 6, true);
 
+        } else if(type == 8) {
+            //https://algosdotorg.files.wordpress.com/2014/09/maxc.jpg
+            graph.addNode(1, -1);
+            graph.addNode(2, -1);
+            graph.addNode(3, -1);
+            graph.addNode(4, -1);
+            graph.addNode(5, -1);
+            graph.addNode(6, -1);
+            graph.addNode(7, -1);
+
+            graph.addEdge(1,2, true);
+            graph.addEdge(1,3, true);
+            graph.addEdge(1,4, true);
+            graph.addEdge(2,3, true);
+            graph.addEdge(2,5, true);
+            graph.addEdge(4,5, true);
+            graph.addEdge(4,3, true);
+            graph.addEdge(4,6, true);
+            graph.addEdge(5,7, true);
+
         }
 
+        System.out.println(ChromaticNumber.compute(ChromaticNumber.Type.LOWER, graph, true));
         System.out.println(ChromaticNumber.compute(ChromaticNumber.Type.EXACT, graph, true));
     }
 

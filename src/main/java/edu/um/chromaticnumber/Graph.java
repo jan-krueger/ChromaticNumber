@@ -53,12 +53,6 @@ public class Graph {
         return null;
     }
 
-    public List<Edge> getEdgeList() {
-        List<Edge> edges = new ArrayList<>();
-        this.edges.forEach((k, v) -> edges.addAll(v));
-        return edges;
-    }
-
     public List<Edge> getEdges(int node) {
         return this.edges.getOrDefault(node, new ArrayList<>());
     }

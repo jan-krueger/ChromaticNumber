@@ -16,7 +16,7 @@ public class ChromaticNumber {
 
         switch (type) {
 
-            case LOWER: return -1;
+            case LOWER: return lowerBound(graph);
             case UPPER: return upperBoundIterative(graph);
             case EXACT: return exactTest(graph, printAdditionalInformation);
 
@@ -149,10 +149,10 @@ public class ChromaticNumber {
 
     //--- EXACT CHROMATIC NUMBER ---
     private static boolean exact(Graph graph, int colours) {
-        return exactIterative(graph, colours, graph.getNode(graph.getMinNodeId()));
+        return exact(graph, colours, graph.getNode(graph.getMinNodeId()));
     }
 
-    private static boolean exactIterative(Graph graph, int color_nb, Node node) {
+    private static boolean exact(Graph graph, int color_nb, Node node) {
 
         //--- Are all nodes coloured? If so, we are done.
         if(graph.getNodes().values().stream().noneMatch(e -> e.getValue() == -1)) {
@@ -166,7 +166,7 @@ public class ChromaticNumber {
 
                 Node next = graph.getNextAvailableNode(node);
 
-                if(next == null || exactIterative(graph, color_nb, next)) {
+                if(next == null || exact(graph, color_nb, next)) {
                     return true;
                 }
 
@@ -182,18 +182,53 @@ public class ChromaticNumber {
     }
 
     //--- LOWER BOUND --
-    /*
+
+    //http://www.dcs.gla.ac.uk/~pat/jchoco/clique/enumeration/report.pdf
     public static int lowerBound(Graph graph) {
-        return bronKerbosch(graph.getEdgeList(), new ArrayList<>(), new ArrayList<>());
+        return bronKerbosch(graph, new ArrayList<>(), new ArrayList<>(graph.getNodes().values()), new ArrayList<>(), Integer.MAX_VALUE);
     }
-*/
-   /* private static int bronKerbosch(List<Node.Edge> p, List<Node.Edge> r, List<Node.Edge> x) {
-        if(p.stream().filter(x::contains).count() == 0) {
-            return r.size();
+
+    private static void tomita(Graph graph, List<Node> subg, List<Node> cand) {
+        if(subg.isEmpty()) {
+            System.out.println("clique,");
+        } else {
+
         }
-        p.forEach(edge -> {
-            bronKerbosch((p.contains(edge) ? new ArrayList<Node.Edge>() {{this.add(edge)}} : new ArrayList<>())), r.stream().filter())
-        });
-    }*/
+    }
+
+    private static int bronKerbosch(Graph graph, List<Node> potential_clique, List<Node> candidates, List<Node> excluded_set, int min) {
+        if(candidates.isEmpty() && excluded_set.isEmpty()) {
+            min = Math.min(min, potential_clique.size());
+        }
+
+        Iterator<Node> nodeIterator = candidates.iterator();
+        while (nodeIterator.hasNext()) {
+            //---
+            Node node = nodeIterator.next();
+            List<Node> neighbours = graph.getEdges(node.getId())
+                    .stream()
+                    .map(Node.Edge::getTo)
+                    .collect(Collectors.toList());
+
+            //---
+            /*List<Node> R_new = new ArrayList<Node>(_R) {{
+                this.add(node);
+            }};*/
+            potential_clique.add(node);
+            candidates = candidates.stream()
+                    .filter(neighbours::contains)
+                    .collect(Collectors.toList());
+            excluded_set = excluded_set.stream()
+                    .filter(neighbours::contains)
+                    .collect(Collectors.toList());
+
+            min = Math.min(bronKerbosch(graph, potential_clique, candidates, excluded_set, min), min);
+
+            nodeIterator.remove();
+            excluded_set.add(node);
+        }
+
+        return min;
+    }
 
 }
