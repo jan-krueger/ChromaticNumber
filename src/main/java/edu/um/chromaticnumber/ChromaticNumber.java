@@ -30,6 +30,7 @@ public class ChromaticNumber {
         int upper = greedy(graph);
         System.out.println("Greedy " + upper);
         graph.reset();
+        upper--;
         while (exact(graph, upper)) {
             graph.reset();
             upper--;
@@ -178,7 +179,7 @@ public class ChromaticNumber {
                     return true;
                 }
 
-                node.setValue(0);
+                node.setValue(-1);
             }
         }
 

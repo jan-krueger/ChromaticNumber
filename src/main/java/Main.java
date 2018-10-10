@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) {
         //
-        int type = 0;
+        int type = 4;
 
         Graph graph = new Graph();
         if(type == 0) {
@@ -102,7 +102,7 @@ public class Main {
 
 
         } else if(type == 4) {
-            final int nodes = 2000;
+            final int nodes = 100;
             IntStream.range(0, nodes).forEach(i -> graph.addNode(i, -1));
             Random random = new Random();
 
