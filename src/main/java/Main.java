@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) {
         //
-        int type = 4;
+        int type = 0;
 
         Graph graph = new Graph();
         if(type == 0) {
@@ -102,36 +102,17 @@ public class Main {
 
 
         } else if(type == 4) {
-            final int nodes = 100;
+            final int nodes = 50;
             IntStream.range(0, nodes).forEach(i -> graph.addNode(i, -1));
             Random random = new Random();
 
             for(int from = 0; from < nodes; from++) {
                 for(int to = 0; to < nodes; to++) {
-                    if (from != to && random.nextDouble() < .1) {
+                    if (from != to && random.nextDouble() < .8) {
                         graph.addEdge(from, to, true);
                     }
                 }
             }
-
-            /*
-            long totalTime = 0;
-            List<Node> empty = new ArrayList<>();
-            int result = -1;
-            for(int from = 0; from < nodes; from++) {
-                long time = System.nanoTime();
-                result = Math.max(result, ChromaticNumber.exact(graph, graph.getNode(from), empty));
-                for(int to = 0; to < nodes; to++) {
-                    if(from != to) {
-                        graph.addEdge(from, to, true);
-                        graph.getNode(from).setValue(-1);
-                        graph.getNode(to).setValue(-1);
-                    }
-                }
-                totalTime += (System.nanoTime() - time);
-            }
-            System.out.println(totalTime + "ns -> " + TimeUnit.NANOSECONDS.toMillis(totalTime) + " ms => " + result);
-            */
 
         } else if(type == 5) {
             for(int i = 0; i < 12; i++) graph.addNode(i, -1);
@@ -176,9 +157,39 @@ public class Main {
             graph.addEdge(3, 5, true);
             graph.addEdge(3, 6, true);
 
+        } else if(type == 8) {
+            graph.addNode(0, -1);
+            graph.addNode(1, -1);
+            graph.addNode(2, -1);
+            graph.addNode(3, -1);
+            graph.addNode(4, -1);
+            graph.addNode(5, -1);
+            graph.addNode(6, -1);
+            graph.addNode(7, -1);
+
+            graph.addEdge(0, 1, true);
+            graph.addEdge(0, 2, true);
+            graph.addEdge(0, 3, true);
+            graph.addEdge(1, 2, true);
+
+            graph.addEdge(3, 4, true);
+            graph.addEdge(3, 5, true);
+            graph.addEdge(3, 6, true);
+            graph.addEdge(3, 7, true);
+            graph.addEdge(4, 5, true);
+            graph.addEdge(4, 6, true);
+            graph.addEdge(4, 7, true);
+
+            graph.addEdge(5, 6, true);
+            graph.addEdge(5, 7, true);
+
+            graph.addEdge(6, 7, true);
         }
 
-        System.out.println(ChromaticNumber.compute(ChromaticNumber.Type.EXACT, graph, true));
+        long now = System.currentTimeMillis();
+        //ChromaticNumber.exactTestAync(graph);
+        ChromaticNumber.compute(ChromaticNumber.Type.EXACT, graph, false);
+        System.out.printf("Time to execute: %dms%n", (System.currentTimeMillis() - now));
     }
 
 }
