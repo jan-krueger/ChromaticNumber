@@ -41,6 +41,15 @@ public class Graph {
         if(this.nodes.containsKey(i)) {
             return this.nodes.get(i);
         }
+        throw new IllegalArgumentException();
+    }
+
+    public Node getNextAvailableNode(Node start) {
+        for(int i = start.getId() + 1; i <= maxNodeId; i++) {
+            if(this.nodes.containsKey(i)) {
+                return this.nodes.get(i);
+            }
+        }
         return null;
     }
 
@@ -61,6 +70,7 @@ public class Graph {
     public Map<Integer, List<Edge>> getEdges() {
         return this.edges;
     }
+
 
     public int getMaxNodeId() {
         return maxNodeId;

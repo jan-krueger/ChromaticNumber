@@ -178,16 +178,7 @@ public class Main {
 
         }
 
-        boolean iterative = true;
-
-        long time = System.nanoTime();
-        //int output = iterative ? ChromaticNumber.upperBoundIterative(graph) : ChromaticNumber.compute(ChromaticNumber.Type.EXACT, graph);
-        long timeDelta = (System.nanoTime() - time);
-        //System.out.println("Upper Bound: " + ChromaticNumber.compute(ChromaticNumber.Type.UPPER, graph) + " <-> " + ChromaticNumber.compute(ChromaticNumber.Type.LOWER, graph));
-        //System.out.println(String.format("Chromatic Number: %d -> Time: %dns (%dms)", output, timeDelta, TimeUnit.NANOSECONDS.toMillis(timeDelta)));
-        System.out.println(ChromaticNumber.exactTest(graph));
-        graph.reset();
-        System.out.println("simple: " + ChromaticNumber.simpleUpperBound(graph));
+        System.out.println(ChromaticNumber.compute(ChromaticNumber.Type.EXACT, graph, true));
     }
 
 }
