@@ -218,7 +218,12 @@ public class Main {
         //ChromaticNumber.exactTestAync(graph);
         final int result = ChromaticNumber.compute(ChromaticNumber.Type.EXACT, graph, false);
         System.out.printf("Time to execute: %dms%n", (System.currentTimeMillis() - now));
+        generateGephiFile(ChromaticNumber.graph);
 
+
+    }
+
+    private static void generateGephiFile(Graph graph) {
         //--- Gephi
         try {
 
@@ -228,8 +233,13 @@ public class Main {
                 this.add(new Color(0x135058));
                 this.add(new Color(0xdc2430));
                 this.add(new Color(0x7b4397));
-                this.add( new Color(0x2a0845));
                 this.add(new Color(0xFFA17F));
+                this.add(new Color(0xFF6FCF));
+                this.add(new Color(0xFFFF60));
+                this.add(new Color(0x00FF80));
+                this.add(new Color(0xFFFFFF));
+                this.add(new Color(0x153B50));
+                this.add(new Color(0x2a0845));
             }};
 
             StringBuilder builder = new StringBuilder();
