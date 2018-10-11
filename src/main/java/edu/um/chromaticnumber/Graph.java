@@ -4,7 +4,7 @@ import edu.um.chromaticnumber.Node.Edge;
 
 import java.util.*;
 
-public class Graph {
+public class Graph implements Cloneable {
 
     private Map<Integer, Node> nodes = new HashMap<>();
     private Map<Integer, List<Edge>> edges = new HashMap<>();
@@ -72,5 +72,13 @@ public class Graph {
 
     public int getMinNodeId() {
         return minNodeId;
+    }
+
+    @Override
+    public Graph clone() {
+        Graph clone = new Graph();
+        this.nodes.forEach((k, v) -> clone.addNode(k, v.getValue()));
+        this.edges.forEach((k, v) -> v.forEach(edge -> clone.addEdge(edge.getFrom().getId(), edge.getTo().getId(), true)));
+        return clone;
     }
 }
